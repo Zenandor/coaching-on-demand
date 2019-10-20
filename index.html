@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Coaching On Demand</title>
+
+    <style>
+        #requests{
+            display: grid;
+            grid-template-columns: 45vw 45vw;
+            grid-template-rows: 45vh 45vh 45vh;
+        }
+
+        .container__development{
+            grid-column: 1 /span 1;
+            grid-row: 1 /span 1;
+        }
+        .container__design{
+            grid-column: 2 /span 1;
+            grid-row: 1 /span 1;
+        }
+        .container__concept{
+            grid-column: 1 /span 1;
+            grid-row: 2 /span 1;
+        }
+        .container__business{
+            grid-column: 2 /span 1;
+            grid-row: 2 /span 1;
+        }
+        .container__pitch{
+            grid-column: 1 /span 1;
+            grid-row: 3 /span 1;
+        }
+    </style>
+</head>
+<body>
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/7.2.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/3.1.0/firebase-database.js"></script>
+
+    <!-- TODO: Add SDKs for Firebase products that you want to use
+        https://firebase.google.com/docs/web/setup#available-libraries -->
+    <script src="https://www.gstatic.com/firebasejs/7.2.1/firebase-analytics.js"></script>
+
+    <script>
+    // Your web app's Firebase configuration
+    var firebaseConfig = {
+        apiKey: "AIzaSyA6i8SvbFr4OAm334vrn9ff8RdTALy3uF4",
+        authDomain: "coaching-on-demand.firebaseapp.com",
+        databaseURL: "https://coaching-on-demand.firebaseio.com",
+        projectId: "coaching-on-demand",
+        storageBucket: "coaching-on-demand.appspot.com",
+        messagingSenderId: "721625490506",
+        appId: "1:721625490506:web:aead3113c2dd9b5d2472b3",
+        measurementId: "G-0ZE588L7VX"
+    };
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    firebase.analytics();
+
+    function submitRequest(){
+        var category = document.getElementById('category').value;
+        var group = document.getElementById('group').value;
+        var description = document.getElementById('description').value;
+        var time = parseInt((new Date().getTime() / 1000).toFixed(0))
+
+        var checkGroup = checkIfGroupEmpty(group);
+        var checkDescription = checkIfDescriptionEmpty(description);
+        var checkCategory = checkIfCategoryEmpty(category);
+
+        if(checkGroup){
+            if(checkDescription){
+                if(checkCategory){
+                    document.getElementById('error').innerHTML = ''; 
+                    firebase.database().ref(group).set({
+                        description: description,
+                        time: time,
+                        category: category
+                    });
+                    
+                }else{
+                    document.getElementById('error').innerHTML = "You have to select a category";
+                }
+            }else{
+                document.getElementById('error').innerHTML = "You have to fill in a description";
+            }
+            
+        }else{
+            document.getElementById('error').innerHTML = "You have to select your group";
+        }
+    }
+
+    function checkIfCategoryEmpty(category){
+        if(category == 0){
+            return false;
+        }
+
+        return true;
+    }
+
+    function checkIfGroupEmpty(group){
+        if(group == 0){
+            return false;
+        }
+
+        return true;
+    }
+
+    function checkIfDescriptionEmpty(description){
+        if(description == ''){
+            return false;
+        }
+
+        return true;
+    }
+
+    firebase.database().ref().orderByChild('time').on('value', function(snapshot){
+        document.getElementById('development').innerHTML = '';
+        document.getElementById('design').innerHTML = '';
+        document.getElementById('concept').innerHTML = '';
+        document.getElementById('pitch').innerHTML = '';
+        document.getElementById('business').innerHTML = '';
+
+        snapshot.forEach(function(request){
+                document.getElementById(request.val().category).innerHTML += "<div id='" + request.key + "' class='request' > <h3>Group " + request.key + "</h3></div>"
+        })
+    })
+
+    </script>
+
+    <h1>Coaching On Demand</h1>
+
+    <select name="group" id="group">
+        <option value="0">--Choose Group--</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+        <option value="4">4</option>
+        <option value="5">5</option>
+        <option value="6">6</option>
+        <option value="7">7</option>
+        <option value="8">8</option>
+        <option value="9">9</option>
+        <option value="10">10</option>
+        <option value="11">11</option>
+        <option value="12">12</option>
+        <option value="13">13</option>
+        <option value="14">14</option>
+        <option value="15">15</option>
+        <option value="16">16</option>
+        <option value="17">17</option>
+        <option value="18">18</option>
+        <option value="19">19</option>
+        <option value="20">20</option>
+    </select>
+
+    <select name="category" id="category">
+        <option value="0">--Choose Category--</option>
+        <option value="development">development</option>
+        <option value="design">design</option>
+        <option value="business">business</option>
+        <option value="concept">concept</option>
+        <option value="pitch">pitch</option>
+    </select>
+
+    <textarea name="description" id="description" cols="30" rows="10" placeholder="Describe your problem here"></textarea>
+
+    <button onclick="submitRequest()">Submit Request</button>
+
+    <p id="error"></p>
+
+    <div id="requests__wrapper">
+        <h1>Cues: </h1>
+        <div id="requests">
+            <div class="container container__development">
+                <h2>Development</h2>
+                <div id="development">
+                    
+                </div>
+            </div>
+
+            <div class="container container__design">
+                <h2>Design</h2>
+                <div id="design">
+                    
+                </div>
+            </div>
+
+            <div class="container container__concept">
+                <h2>Concept</h2>
+                <div id="concept">
+                    
+                </div>
+            </div>
+
+            <div class="container container__pitch">
+                <h2>Pitch</h2>
+                <div id="pitch">
+                    
+                </div>
+            </div>
+
+            <div class="container container__business">
+                <h2>Business</h2>
+                <div id="business">
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

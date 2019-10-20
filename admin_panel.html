@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Coaching On Demand</title>
+
+    <style>
+        #requests{
+            display: grid;
+            grid-template-columns: 45vw 45vw;
+            grid-template-rows: 45vh 45vh 45vh;
+        }
+
+        .container__development{
+            grid-column: 1 /span 1;
+            grid-row: 1 /span 1;
+        }
+        .container__design{
+            grid-column: 2 /span 1;
+            grid-row: 1 /span 1;
+        }
+        .container__concept{
+            grid-column: 1 /span 1;
+            grid-row: 2 /span 1;
+        }
+        .container__business{
+            grid-column: 2 /span 1;
+            grid-row: 2 /span 1;
+        }
+        .container__pitch{
+            grid-column: 1 /span 1;
+            grid-row: 3 /span 1;
+        }
+
+        .request{
+            position: relative;
+            margin-right: 2.5vw;
+        }
+
+        .deleteRequest{
+            position: absolute;
+            right: 5%;
+            top: 5%;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <!-- The core Firebase JS SDK is always required and must be listed first -->
+    <script src="https://www.gstatic.com/firebasejs/7.2.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/3.1.0/firebase-database.js"></script>
+
+    <!-- TODO: Add SDKs for Firebase products that you want to use
+        https://firebase.google.com/docs/web/setup#available-libraries -->
+    <script src="https://www.gstatic.com/firebasejs/7.2.1/firebase-analytics.js"></script>
+
+    <script>
+    // Your web app's Firebase configuration
+    var firebaseConfig = {
+        apiKey: "AIzaSyA6i8SvbFr4OAm334vrn9ff8RdTALy3uF4",
+        authDomain: "coaching-on-demand.firebaseapp.com",
+        databaseURL: "https://coaching-on-demand.firebaseio.com",
+        projectId: "coaching-on-demand",
+        storageBucket: "coaching-on-demand.appspot.com",
+        messagingSenderId: "721625490506",
+        appId: "1:721625490506:web:aead3113c2dd9b5d2472b3",
+        measurementId: "G-0ZE588L7VX"
+    };
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+    firebase.analytics();
+
+    firebase.database().ref().orderByChild('time').on('value', function(snapshot){
+        document.getElementById('development').innerHTML = '';
+        document.getElementById('design').innerHTML = '';
+        document.getElementById('concept').innerHTML = '';
+        document.getElementById('pitch').innerHTML = '';
+        document.getElementById('business').innerHTML = '';
+
+        snapshot.forEach(function(request){
+                document.getElementById(request.val().category).innerHTML += "<div id='" + request.key + "' class='request' > <h3>Group " + request.key + "</h3> <p>" + request.val().description +" </p> <div class='deleteRequest' onclick='deleteRequest("+ request.key + ")'>x</div></div>"
+        })
+    })
+
+    function deleteRequest(requestKey){
+        firebase.database().ref(requestKey).remove();
+    }
+
+    </script>
+
+    <h1>Coaching On Demand: Admin Panel</h1>
+
+    <div id="requests__wrapper">
+        <h1>Cues: </h1>
+        <div id="requests">
+            <div class="container container__development">
+                <h2>Development</h2>
+                <div id="development">
+                    
+                </div>
+            </div>
+
+            <div class="container container__design">
+                <h2>Design</h2>
+                <div id="design">
+                    
+                </div>
+            </div>
+
+            <div class="container container__concept">
+                <h2>Concept</h2>
+                <div id="concept">
+                    
+                </div>
+            </div>
+
+            <div class="container container__pitch">
+                <h2>Pitch</h2>
+                <div id="pitch">
+                    
+                </div>
+            </div>
+
+            <div class="container container__business">
+                <h2>Business</h2>
+                <div id="business">
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
