@@ -64,7 +64,8 @@
         var category = document.getElementById('category').value;
         var group = document.getElementById('group').value;
         var description = document.getElementById('description').value;
-        var time = parseInt((new Date().getTime() / 1000).toFixed(0))
+        var code = document.getElementById('code').value;
+        var time = parseInt((new Date().getTime() / 1000).toFixed(0));
 
         var checkGroup = checkIfGroupEmpty(group);
         var checkDescription = checkIfDescriptionEmpty(description);
@@ -73,12 +74,22 @@
         if(checkGroup){
             if(checkDescription){
                 if(checkCategory){
-                    document.getElementById('error').innerHTML = ''; 
-                    firebase.database().ref(group).set({
-                        description: description,
-                        time: time,
-                        category: category
+                    var codeCheck;
+                    firebase.database().ref('codes/'+group).once('value', function(snapshot){
+                        codeCheck = snapshot.val();
+                        if(code == codeCheck){
+                            document.getElementById('error').innerHTML = ''; 
+                            firebase.database().ref('requests/'+group).set({
+                                description: description,
+                                time: time,
+                                category: category
+                            });
+                        }else{
+                            document.getElementById('error').innerHTML = "Entered code does not match the entered group's code";
+                        }
                     });
+                    
+                    
                     
                 }else{
                     document.getElementById('error').innerHTML = "You have to select a category";
@@ -116,12 +127,13 @@
         return true;
     }
 
-    firebase.database().ref().orderByChild('time').on('value', function(snapshot){
+    firebase.database().ref("requests").orderByChild('time').on('value', function(snapshot){
         document.getElementById('development').innerHTML = '';
         document.getElementById('design').innerHTML = '';
         document.getElementById('concept').innerHTML = '';
         document.getElementById('pitch').innerHTML = '';
         document.getElementById('business').innerHTML = '';
+
 
         snapshot.forEach(function(request){
                 document.getElementById(request.val().category).innerHTML += "<div id='" + request.key + "' class='request' > <h3>Group " + request.key + "</h3></div>"
@@ -166,6 +178,8 @@
     </select>
 
     <textarea name="description" id="description" cols="30" rows="10" placeholder="Describe your problem here"></textarea>
+
+    <input type="text" name="code" id="code" placeholder="Enter Group Code">
 
     <button onclick="submitRequest()">Submit Request</button>
 

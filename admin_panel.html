@@ -72,7 +72,7 @@
     firebase.initializeApp(firebaseConfig);
     firebase.analytics();
 
-    firebase.database().ref().orderByChild('time').on('value', function(snapshot){
+    firebase.database().ref('requests').orderByChild('time').on('value', function(snapshot){
         document.getElementById('development').innerHTML = '';
         document.getElementById('design').innerHTML = '';
         document.getElementById('concept').innerHTML = '';
